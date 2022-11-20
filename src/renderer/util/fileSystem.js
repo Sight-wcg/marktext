@@ -149,12 +149,12 @@ export const uploadImage = async (pathname, image, preferences) => {
       })
   }
 
-  const uploadByCommand = async (uploader, filepath) => {
+  const uploadByCommand = async (uploader, filepath, suffix = '') => {
     let isPath = true
     if (typeof filepath !== 'string') {
       isPath = false
       const data = new Uint8Array(filepath)
-      filepath = path.join(tmpdir(), +new Date())
+      filepath = path.join(tmpdir(), +new Date() + '.png')
       await fs.writeFile(filepath, data)
     }
     if (uploader === 'picgo') {
@@ -173,13 +173,18 @@ export const uploadImage = async (pathname, image, preferences) => {
         }
       })
     } else {
-      cp.execFile(cliScript, [filepath], async (err, data) => {
+      cp.execFile(cliScript, [filepath], {
+        // timeout:1000,
+        maxbuffer: 5000 * 1024,
+        killSignal: 'SIGKILL'
+      }, async (err, data) => {
         if (!isPath) {
           await fs.unlink(filepath)
         }
         if (err) {
           return rj(err)
         }
+        console.log(data)
         re(data.trim())
       })
     }
@@ -224,7 +229,7 @@ export const uploadImage = async (pathname, image, preferences) => {
         switch (currentUploader) {
           case 'picgo':
           case 'cliScript':
-            uploadByCommand(currentUploader, reader.result)
+            uploadByCommand(currentUploader, reader.result, path.extname(image.name))
             break
           default:
             uploadByGithub(reader.result, image.name)
@@ -241,7 +246,11 @@ export const uploadImage = async (pathname, image, preferences) => {
 export const isFileExecutableSync = (filepath) => {
   try {
     const stat = statSync(filepath)
-    return stat.isFile() && (stat.mode & (constants.S_IXUSR | constants.S_IXGRP | constants.S_IXOTH)) !== 0
+    if (process.platform === 'win32') {
+      return stat.isFile()
+    } else {
+      return stat.isFile() && (stat.mode & (constants.S_IXUSR | constants.S_IXGRP | constants.S_IXOTH)) !== 0
+    }
   } catch (err) {
     // err ignored
     return false

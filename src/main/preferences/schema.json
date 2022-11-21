@@ -345,7 +345,8 @@
     "enum": [
       "upload",
       "folder",
-      "path"
+      "path",
+      "transformToBase64"
     ],
     "default": "path"
   },

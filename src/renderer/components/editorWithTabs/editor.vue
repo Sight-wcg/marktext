@@ -101,7 +101,7 @@ import Printer from '@/services/printService'
 import { SpellcheckerLanguageCommand } from '@/commands'
 import { SpellChecker } from '@/spellchecker'
 import { isOsx, animatedScrollTo } from '@/util'
-import { moveImageToFolder, moveToRelativeFolder, uploadImage } from '@/util/fileSystem'
+import { moveImageToFolder, moveToRelativeFolder, uploadImage, transformedImageToBase64 } from '@/util/fileSystem'
 import { guessClipboardFilePath } from '@/util/clipboard'
 import { getCssForOptions, getHtmlToc } from '@/util/pdf'
 import { addCommonStyle, setEditorWidth } from '@/util/theme'
@@ -757,6 +757,11 @@ export default {
               destImagePath = await moveToRelativeFolder(relativeBasePath, resolvedImageRelativeDirectoryName, pathname, destImagePath)
             }
           }
+          break
+        }
+        case 'transformToBase64': {
+          destImagePath = await transformedImageToBase64(pathname, image, preferences)
+          //console.log("transformToBase64",destImagePath)
           break
         }
       }

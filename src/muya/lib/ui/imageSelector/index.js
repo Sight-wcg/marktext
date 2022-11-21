@@ -237,6 +237,8 @@ class ImageSelector extends BaseFloat {
   }
 
   replaceImageAsync = async ({ alt, src, title }) => {
+    //console.log('muya', this.muya.options.imageAction());
+
     if (!this.muya.options.imageAction || URL_REG.test(src)) {
       const { alt: oldAlt, src: oldSrc, title: oldTitle } = this.imageInfo.token.attrs
       if (alt !== oldAlt || src !== oldSrc || title !== oldTitle) {
@@ -259,6 +261,7 @@ class ImageSelector extends BaseFloat {
           if (localPath) {
             this.muya.contentState.stateRender.urlMap.set(newSrc, localPath)
           }
+          //
           const imageWrapper = this.muya.container.querySelector(`span[data-id=${id}]`)
 
           if (imageWrapper) {

@@ -28,9 +28,9 @@ module.exports = {
     // Two spaces but disallow semicolons
     indent: ['error', 2, { 'SwitchCase': 1, 'ignoreComments': true }],
     semi: [2, 'never'],
-    'no-return-await': 'error',
-    'no-return-assign': 'error',
-    'no-new': 'error',
+    'no-return-await': 'off',
+    'no-return-assign': 'off',
+    'no-new': 'off',
     // allow paren-less arrow functions
     'arrow-parens': 'off',
     // allow console

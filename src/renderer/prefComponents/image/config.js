@@ -7,4 +7,7 @@ export const imageActions = [{
 }, {
   label: 'Keep original location',
   value: 'path'
+}, {
+  label: '转换为 base64',
+  value: 'transformToBase64'
 }]

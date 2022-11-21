@@ -175,7 +175,7 @@ export const uploadImage = async (pathname, image, preferences) => {
     } else {
       cp.execFile(cliScript, [filepath], {
         // timeout:1000,
-        maxbuffer: 5000 * 1024,
+        maxbuffer: 10000 * 1024,
         killSignal: 'SIGKILL'
       }, async (err, data) => {
         if (!isPath) {
@@ -184,7 +184,6 @@ export const uploadImage = async (pathname, image, preferences) => {
         if (err) {
           return rj(err)
         }
-        console.log(data)
         re(data.trim())
       })
     }
@@ -255,4 +254,35 @@ export const isFileExecutableSync = (filepath) => {
     // err ignored
     return false
   }
+}
+
+export const transformedImageToBase64 = async (pathname, image, preferences) => {
+  let re
+  let rj
+  const promise = new Promise((resolve, reject) => {
+    re = resolve
+    rj = reject
+  })
+
+  const isPath = typeof image === 'string'
+  if(isPath){
+    const dirname = path.dirname(pathname)
+    const imagePath = path.resolve(dirname, image)
+    const isImage = isImageFile(imagePath)
+    const imageFile = await fs.readFile(imagePath)
+    const base64 = Buffer.from(imageFile).toString('base64')
+
+    re('data:image/png;base64,' + base64)
+
+  }else{
+    const reader = new FileReader()
+    reader.onload = async () => {
+      const base64 = Buffer.from(reader.result).toString('base64')
+      //console.log(reader.result, image.name, path.extname(image.name))
+      re('data:image/png;base64,' + base64)
+    }
+    reader.readAsArrayBuffer(image)
+  }
+
+  return promise
 }

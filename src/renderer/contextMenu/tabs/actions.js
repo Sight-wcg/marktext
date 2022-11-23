@@ -27,3 +27,15 @@ export const copyPath = (tabId) => {
 export const showInFolder = (tabId) => {
   bus.$emit('TABS::show-in-folder', tabId)
 }
+
+export const transformPictureToBase64 = (tabId) => {
+  bus.$emit('TABS::transform-picture-base64', tabId)
+}
+
+export const transformPictureToLocal = (tabId) => {
+  bus.$emit('TABS::transform-picture-local', tabId)
+}
+
+export const transformPictureToNetwork = (tabId) => {
+  bus.$emit('TABS::transform-picture-network', tabId)
+}

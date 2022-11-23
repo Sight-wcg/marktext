@@ -56,8 +56,8 @@
   "spellcheckerNoUnderline": false,
   "spellcheckerLanguage": "en-US",
 
-  "sideBarVisibility": false,
-  "tabBarVisibility": false,
+  "sideBarVisibility": true,
+  "tabBarVisibility": true,
   "sourceCodeModeEnabled": false,
 
   "searchExclusions": [],

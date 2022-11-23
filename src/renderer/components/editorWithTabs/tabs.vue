@@ -48,6 +48,8 @@ import dragula from 'dragula'
 import { tabsMixins } from '../../mixins'
 import { showContextMenu } from '../../contextMenu/tabs'
 import bus from '../../bus'
+import path from 'path'
+import { execFile } from 'child_process'
 
 export default {
   data () {
@@ -113,6 +115,28 @@ export default {
         shell.showItemInFolder(tab.pathname)
       }
     },
+    transformPicture(tabId, type){
+      const tab = this.tabs.find(f => f.id === tabId)
+      if (tab && tab.pathname) {
+        // 临时
+        const filepath = path.join(process.cwd(), `/python_scripts/pic.py`)
+        execFile('python', [filepath, tab.pathname, type],
+          (error, stdout, stderr) => {
+            console.log(error);
+            console.log(stdout);
+            console.log(stderr);
+          })
+      }
+    },
+    transformPictureToBase64(tabId) {
+      this.transformPicture(tabId, 'b')
+    },
+    transformPictureToLocal(tabId) {
+      this.transformPicture(tabId, 'd')
+    },
+    transformPictureToNetwork(tabId) {
+      this.transformPicture(tabId, 'n')
+    },
     handleContextMenu (event, tab) {
       if (tab.id) {
         showContextMenu(event, tab)
@@ -128,6 +152,10 @@ export default {
       bus.$on('TABS::rename', this.rename)
       bus.$on('TABS::copy-path', this.copyPath)
       bus.$on('TABS::show-in-folder', this.showInFolder)
+      bus.$on('TABS::transform-picture-base64', this.transformPictureToBase64)
+      bus.$on('TABS::transform-picture-local', this.transformPictureToLocal)
+      bus.$on('TABS::transform-picture-network', this.transformPictureToNetwork)
+
     })
   },
   mounted () {
@@ -195,6 +223,9 @@ export default {
     bus.$off('TABS::rename', this.rename)
     bus.$off('TABS::copy-path', this.copyPath)
     bus.$off('TABS::show-in-folder', this.showInFolder)
+    bus.$on('TABS::transform-picture-base64', this.transformPictureToBase64)
+    bus.$on('TABS::transform-picture-local', this.transformPictureToLocal)
+    bus.$on('TABS::transform-picture-network', this.transformPictureToNetwork)
   }
 }
 </script>

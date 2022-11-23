@@ -86,7 +86,11 @@ export default {
     ...mapState({
       projectTree: state => state.project.projectTree,
       pathname: state => state.editor.currentFile.pathname,
-      filename: state => state.editor.currentFile.filename,
+      filename: state => {
+         //console.log('cuf', state.editor.currentFile);
+
+        return state.editor.currentFile.filename
+      },
       isSaved: state => state.editor.currentFile.isSaved,
       markdown: state => state.editor.currentFile.markdown,
       cursor: state => state.editor.currentFile.cursor,

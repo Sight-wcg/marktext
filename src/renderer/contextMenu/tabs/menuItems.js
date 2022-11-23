@@ -61,3 +61,27 @@ export const SHOW_IN_FOLDER = {
     contextMenu.showInFolder(menuItem._tabId)
   }
 }
+
+export const TRANSFORM_PICTURE_BASE64 = {
+  label: '将图片转换为Base64',
+  id: 'transformPictureToBase64',
+  click (menuItem, browserWindow) {
+    contextMenu.transformPictureToBase64(menuItem._tabId)
+  }
+}
+
+export const TRANSFORM_PICTURE_LOCAL = {
+  label: '将图片转换为本地',
+  id: 'transformPictureToLocal',
+  click (menuItem, browserWindow) {
+    contextMenu.transformPictureToLocal(menuItem._tabId)
+  }
+}
+
+export const TRANSFORM_PICTURE_NETWORK = {
+  label: '将图片转换为网络',
+  id: 'transformPictureToNetwork',
+  click (menuItem, browserWindow) {
+    contextMenu.transformPictureToNetwork(menuItem._tabId)
+  }
+}

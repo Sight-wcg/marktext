@@ -135,6 +135,11 @@ class ImageToolbar extends BaseFloat {
         this.muya.contentState.updateImage(this.imageInfo, 'data-align', item.type)
         return this.hide()
       }
+      case 'transformerToBase64' : {
+        //console.log("h",this.imageInfo.token.attrs.src )
+        this.muya.contentState.updateImage(this.imageInfo, 'data-align', item.type)
+        return this.hide()
+      }
     }
   }
 }

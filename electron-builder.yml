@@ -50,7 +50,8 @@ extraFiles:
 - "LICENSE"
 - from: "resources/THIRD-PARTY-LICENSES.txt"
   to: "THIRD-PARTY-LICENSES.txt"
-- "python_scripts"
+- from: "python_scripts/pic.py"
+  to: "pic.py"
 afterPack: './.electron-vue/electron-builder/afterPack.js'
 
 fileAssociations:

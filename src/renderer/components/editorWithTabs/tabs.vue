@@ -119,7 +119,7 @@ export default {
       const tab = this.tabs.find(f => f.id === tabId)
       if (tab && tab.pathname) {
         // 临时
-        const filepath = path.join(process.cwd(), '/python_scripts/pic.py')
+        const filepath = path.join(process.cwd(), '/pic.py')
         execFile('python', [filepath, tab.pathname, type],
           (error, stdout, stderr) => {
             console.log(error)

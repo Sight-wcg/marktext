@@ -115,26 +115,26 @@ export default {
         shell.showItemInFolder(tab.pathname)
       }
     },
-    transformPicture(tabId, type){
+    transformPicture (tabId, type) {
       const tab = this.tabs.find(f => f.id === tabId)
       if (tab && tab.pathname) {
         // 临时
-        const filepath = path.join(process.cwd(), `/python_scripts/pic.py`)
+        const filepath = path.join(process.cwd(), '/python_scripts/pic.py')
         execFile('python', [filepath, tab.pathname, type],
           (error, stdout, stderr) => {
-            console.log(error);
-            console.log(stdout);
-            console.log(stderr);
+            console.log(error)
+            console.log(stdout)
+            console.log(stderr)
           })
       }
     },
-    transformPictureToBase64(tabId) {
+    transformPictureToBase64 (tabId) {
       this.transformPicture(tabId, 'b')
     },
-    transformPictureToLocal(tabId) {
+    transformPictureToLocal (tabId) {
       this.transformPicture(tabId, 'd')
     },
-    transformPictureToNetwork(tabId) {
+    transformPictureToNetwork (tabId) {
       this.transformPicture(tabId, 'n')
     },
     handleContextMenu (event, tab) {
@@ -155,7 +155,6 @@ export default {
       bus.$on('TABS::transform-picture-base64', this.transformPictureToBase64)
       bus.$on('TABS::transform-picture-local', this.transformPictureToLocal)
       bus.$on('TABS::transform-picture-network', this.transformPictureToNetwork)
-
     })
   },
   mounted () {

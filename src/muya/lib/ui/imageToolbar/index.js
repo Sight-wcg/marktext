@@ -1,6 +1,11 @@
 import BaseFloat from '../baseFloat'
 import { patch, h } from '../../parser/render/snabbdom'
 import icons from './config'
+import { URL_REG, DATA_URL_REG } from '../../config'
+import path from 'path'
+import fs from 'fs'
+import axios from 'axios'
+import adapter from 'axios/lib/adapters/http'
 
 import './index.css'
 
@@ -26,7 +31,9 @@ class ImageToolbar extends BaseFloat {
     this.options = opts
     this.icons = icons
     this.reference = null
-    const toolbarContainer = this.toolbarContainer = document.createElement('div')
+    const toolbarContainer = (this.toolbarContainer = document.createElement(
+      'div'
+    ))
     this.container.appendChild(toolbarContainer)
     this.floatBox.classList.add('ag-image-toolbar-container')
     this.listen()
@@ -59,29 +66,40 @@ class ImageToolbar extends BaseFloat {
       if (i.icon) {
         // SVG icon Asset
         iconWrapperSelector = 'div.icon-wrapper'
-        icon = h('i.icon', h('i.icon-inner', {
-          style: {
-            background: `url(${i.icon}) no-repeat`,
-            'background-size': '100%'
-          }
-        }, ''))
+        icon = h(
+          'i.icon',
+          h(
+            'i.icon-inner',
+            {
+              style: {
+                background: `url(${i.icon}) no-repeat`,
+                'background-size': '100%'
+              }
+            },
+            ''
+          )
+        )
       }
       const iconWrapper = h(iconWrapperSelector, icon)
       let itemSelector = `li.item.${i.type}`
 
-      if (i.type === dataAlign || !dataAlign && i.type === 'inline') {
+      if (i.type === dataAlign || (!dataAlign && i.type === 'inline')) {
         itemSelector += '.active'
       }
-      return h(itemSelector, {
-        dataset: {
-          tip: i.tooltip
-        },
-        on: {
-          click: event => {
-            this.selectItem(event, i)
+      return h(
+        itemSelector,
+        {
+          dataset: {
+            tip: i.tooltip
+          },
+          on: {
+            click: event => {
+              this.selectItem(event, i)
+            }
           }
-        }
-      }, [h('div.tooltip', i.tooltip), iconWrapper])
+        },
+        [h('div.tooltip', i.tooltip), iconWrapper]
+      )
     })
 
     const vnode = h('ul', children)
@@ -132,12 +150,62 @@ class ImageToolbar extends BaseFloat {
       case 'left':
       case 'center':
       case 'right': {
-        this.muya.contentState.updateImage(this.imageInfo, 'data-align', item.type)
+        this.muya.contentState.updateImage(
+          this.imageInfo,
+          'data-align',
+          item.type
+        )
         return this.hide()
       }
-      case 'transformerToBase64' : {
-        //console.log("h",this.imageInfo.token.attrs.src )
-        this.muya.contentState.updateImage(this.imageInfo, 'data-align', item.type)
+      case 'transformerToBase64': {
+        const ABSOLUTE_PATH_REGEX = /^(?:\/|(?:[A-Za-z]:)?[\\|/])/
+        const RELATIVE_PATH_REGEX = /^\.?\.(\/|$)/
+        let src = this.imageInfo.token.attrs.src
+        const currentFilePath = this.options.currentFile().pathname.replace(/\\/g, '/')
+        if (!currentFilePath || DATA_URL_REG.test(src)) {
+          return this.hide()
+        }
+        if (URL_REG.test(src)) {
+          axios.defaults.adapter = adapter
+          const http = axios.create({
+            adapter
+          })
+          http
+            .get(src, {
+              responseType: 'arraybuffer'
+            })
+            .then(res => {
+              let blob = new Blob([res.data], { type: 'image/png' })
+              let fileReader = new FileReader()
+              fileReader.readAsDataURL(blob)
+              fileReader.onloadend = e => {
+                let base64 = e.target.result
+                this.imageInfo.token.attrs.src = `${base64}`
+                this.muya.contentState.updateImage(
+                  this.imageInfo,
+                  'data-align',
+                  item.type
+                )
+              }
+            })
+          return this.hide()
+        }
+        if (!ABSOLUTE_PATH_REGEX.test(src)) {
+          const filepath = path.dirname(currentFilePath)
+          const imagePath = path.resolve(filepath, src)
+          src = imagePath
+        }
+        if (ABSOLUTE_PATH_REGEX.test(path.dirname(src))) {
+          const imageFile = fs.readFileSync(src)
+          const base64 = Buffer.from(imageFile).toString('base64')
+          this.imageInfo.token.attrs.src = `data:image/png;base64,${base64}`
+          this.muya.contentState.updateImage(
+            this.imageInfo,
+            'data-align',
+            item.type
+          )
+          return this.hide()
+        }
         return this.hide()
       }
     }

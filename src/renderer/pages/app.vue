@@ -87,7 +87,7 @@ export default {
       projectTree: state => state.project.projectTree,
       pathname: state => state.editor.currentFile.pathname,
       filename: state => {
-         //console.log('cuf', state.editor.currentFile);
+         // console.log('cuf', state.editor.currentFile);
 
         return state.editor.currentFile.filename
       },

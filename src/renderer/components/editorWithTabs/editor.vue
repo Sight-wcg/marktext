@@ -497,7 +497,9 @@ export default {
         photoCreatorClick: this.photoCreatorClick
       })
       Muya.use(Transformer)
-      Muya.use(ImageToolbar)
+      Muya.use(ImageToolbar, {
+        currentFile: () => this.currentFile
+      })
       Muya.use(FormatPicker)
       Muya.use(FrontMenu)
       Muya.use(LinkTools, {
@@ -761,7 +763,6 @@ export default {
         }
         case 'transformToBase64': {
           destImagePath = await transformedImageToBase64(pathname, image, preferences)
-          //console.log("transformToBase64",destImagePath)
           break
         }
       }

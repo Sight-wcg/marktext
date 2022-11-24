@@ -265,7 +265,7 @@ export const transformedImageToBase64 = async (pathname, image, preferences) => 
   })
 
   const isPath = typeof image === 'string'
-  if(isPath){
+  if (isPath) {
     const dirname = path.dirname(pathname)
     const imagePath = path.resolve(dirname, image)
     const isImage = isImageFile(imagePath)
@@ -273,12 +273,11 @@ export const transformedImageToBase64 = async (pathname, image, preferences) => 
     const base64 = Buffer.from(imageFile).toString('base64')
 
     re('data:image/png;base64,' + base64)
-
-  }else{
+  } else {
     const reader = new FileReader()
     reader.onload = async () => {
       const base64 = Buffer.from(reader.result).toString('base64')
-      //console.log(reader.result, image.name, path.extname(image.name))
+      // console.log(reader.result, image.name, path.extname(image.name))
       re('data:image/png;base64,' + base64)
     }
     reader.readAsArrayBuffer(image)
